@@ -20,10 +20,10 @@ class EventLoop {
   typedef std::function<void()> Functor;
   EventLoop();
   ~EventLoop();
-  void loop();
+  void loop();   //开始循环，通过epoll得到一个Channel数组指针，然后分发事件，执行待处理函数， **Expired执行已过期没看懂
   void quit();
-  void runInLoop(Functor&& cb);
-  void queueInLoop(Functor&& cb);
+  void runInLoop(Functor&& cb);      
+  void queueInLoop(Functor&& cb);   //把处理函数加入到待处理函数队列
   bool isInLoopThread() const { return threadId_ == CurrentThread::tid(); }
   void assertInLoopThread() { assert(isInLoopThread()); }
   void shutdown(shared_ptr<Channel> channel) { shutDownWR(channel->getFd()); }
