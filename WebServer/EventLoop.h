@@ -15,6 +15,8 @@
 #include <iostream>
 using namespace std;
 
+//每个线程只能有一个EventLoop对象，EventLoop即是时间循环，每次从poller里拿活跃事件，并给到Channel里分发处理。
+//EventLoop中的loop函数会在最底层(Thread)中被真正调用，开始无限的循环，直到某一轮的检查到退出状态后从底层一层一层的退出。
 class EventLoop {
  public:
   typedef std::function<void()> Functor;
@@ -23,7 +25,7 @@ class EventLoop {
   void loop();   //开始循环，通过epoll得到一个Channel数组指针，然后分发事件，执行待处理函数， **Expired执行已过期没看懂
   void quit();
   void runInLoop(Functor&& cb);      
-  void queueInLoop(Functor&& cb);   //把处理函数加入到待处理函数队列
+  void queueInLoop(Functor&& cb);   //把绑定好的处理函数加入到待处理函数队列
   bool isInLoopThread() const { return threadId_ == CurrentThread::tid(); }
   void assertInLoopThread() { assert(isInLoopThread()); }
   void shutdown(shared_ptr<Channel> channel) { shutDownWR(channel->getFd()); }

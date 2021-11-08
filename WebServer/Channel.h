@@ -12,6 +12,10 @@
 class EventLoop;
 class HttpData;
 
+
+//Channel类是存储每个从EentLoop获得到的事件类型和处理函数，负责一个文件描述符的I/O事件
+//当有I/O事件发生的时候会调用相应的处理函数
+//程序中所有带有读写时间的对象都会和一个Channel关联，包括loop中的eventfd，listenfd，HttpData等
 class Channel {
  private:
   typedef std::function<void()> CallBack;
@@ -43,7 +47,7 @@ class Channel {
 
   void setHolder(std::shared_ptr<HttpData> holder) { holder_ = holder; }
   std::shared_ptr<HttpData> getHolder() {
-    std::shared_ptr<HttpData> ret(holder_.lock());
+    std::shared_ptr<HttpData> ret(holder_.lock());   //lock()从weak_ptr获取一个可以操作的shared_ptr;
     return ret;
   }
 
